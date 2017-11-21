@@ -23,8 +23,8 @@ public class LocalZookeeperCluster
   private final int numConnections;
   private final int clusterId;
 
-  private List<ZooKeeperServer> servers = Lists.newArrayList();
-  private List<NIOServerCnxnFactory> connectionFactories = Lists.newArrayList();
+  private ZooKeeperServer server;
+  private NIOServerCnxnFactory connectionFactory;
 
   protected LocalZookeeperCluster(File snapDir, File logDir, int tickTime,
                                  int minSessionTimeout, int maxSessionTimeout,
@@ -77,19 +77,19 @@ public class LocalZookeeperCluster
       throw new RuntimeException(e);
     }
 
-    servers.add(zooKeeperServer);
-    connectionFactories.add(connectionFactory);
+    this.server = zooKeeperServer;
+    this.connectionFactory = connectionFactory;
+  }
+
+  public Port getPort()
+  {
+    return new Port(connectionFactory.getLocalPort());
   }
 
   public void close()
   {
-    for (ZooKeeperServer zooKeeperServer: servers) {
-      zooKeeperServer.shutdown();
-    }
-
-    for (NIOServerCnxnFactory factory: connectionFactories) {
-      factory.shutdown();
-    }
+    server.shutdown();
+    connectionFactory.shutdown();
   }
 
   private NIOServerCnxnFactory portHunt(int currentPort) {
