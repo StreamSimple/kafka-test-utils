@@ -21,6 +21,8 @@ public class LocalKafkaCluster
   private final Port startPort;
 
   private File clusterLogDir;
+  private List<Port> brokerPorts;
+  private boolean running = false;
 
   public LocalKafkaCluster(final int numBrokers, final File logDirs,
                            final LocalZookeeperCluster zookeeperCluster,
@@ -40,14 +42,16 @@ public class LocalKafkaCluster
     clusterLogDir.mkdirs();
 
     final NaivePortHunter portHunter = new NaivePortHunter();
-    List<Port> ports = portHunter.getPorts(startPort, numBrokers);
+    brokerPorts = portHunter.getPorts(startPort, numBrokers);
 
     for (int brokerCount = 0; brokerCount < numBrokers; brokerCount++) {
-      final Port brokerPort = ports.get(brokerCount);
+      final Port brokerPort = brokerPorts.get(brokerCount);
       final KafkaServerStartable kafkaServer = createBroker(brokerCount, brokerPort);
       kafkaServer.startup();
       brokers.add(kafkaServer);
     }
+
+    running = true;
   }
 
   private KafkaServerStartable createBroker(final int brokerId, final Port port)
@@ -66,8 +70,16 @@ public class LocalKafkaCluster
     return new KafkaServerStartable(new KafkaConfig(props));
   }
 
+  public List<Port> getBrokerPorts()
+  {
+    Preconditions.checkState(running, "Cluster is not running.");
+    return Lists.newArrayList(brokerPorts);
+  }
+
   public void close()
   {
+    running = false;
+
     for (KafkaServerStartable broker: brokers) {
       broker.shutdown();
       broker.awaitShutdown();
@@ -93,7 +105,8 @@ public class LocalKafkaCluster
       return this;
     }
 
-    public LocalKafkaCluster build(final File logDirs, final LocalZookeeperCluster zookeeperCluster, final int clusterId)
+    public LocalKafkaCluster build(final File logDirs, final LocalZookeeperCluster zookeeperCluster,
+                                   final int clusterId)
     {
       return new LocalKafkaCluster(numBrokers, logDirs, zookeeperCluster, clusterId, startPort);
     }
