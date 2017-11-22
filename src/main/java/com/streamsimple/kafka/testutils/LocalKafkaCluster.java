@@ -8,8 +8,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import kafka.admin.TopicCommand;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServerStartable;
+import kafka.utils.ZkUtils;
 
 public class LocalKafkaCluster
 {
@@ -72,8 +74,30 @@ public class LocalKafkaCluster
 
   public List<Port> getBrokerPorts()
   {
-    Preconditions.checkState(running, "Cluster is not running.");
+    validateIsRunning();
     return Lists.newArrayList(brokerPorts);
+  }
+
+  public void createTopic(final String topicName, final int partitionCount)
+  {
+    validateIsRunning();
+    String[] args = new String[9];
+    args[0] = "--zookeeper";
+    args[1] = "localhost:" + zookeeperCluster.getPort();
+    args[2] = "--replication-factor";
+    args[3] = "1";
+    args[4] = "--partitions";
+    args[5] = Integer.toString(partitionCount);
+    args[6] = "--topic";
+    args[7] = topicName;
+    args[8] = "--create";
+    ZkUtils zu = ZkUtils.apply("localhost:" + zookeeperCluster.getPort(), 30000, 30000, false);
+    TopicCommand.createTopic(zu, new TopicCommand.TopicCommandOptions(args));
+  }
+
+  private void validateIsRunning()
+  {
+    Preconditions.checkState(running, "Cluster is not running.");
   }
 
   public void close()

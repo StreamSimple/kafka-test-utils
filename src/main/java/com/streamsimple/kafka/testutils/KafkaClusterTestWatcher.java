@@ -13,9 +13,6 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
   public static final String ZOOKEEPER_LOG_DIR = "zookeeperLogDir";
   public static final String KAFKA_LOG_DIR = "kafkaLogDir";
 
-  private final int numBrokers;
-  private final Port kafkaStartPort;
-
   private final LocalZookeeperCluster.Builder zookeeperClusterBuilder;
   private final LocalKafkaCluster.Builder kafkaClusterBuilder;
   private LocalZookeeperCluster localZookeeperCluster;
@@ -30,9 +27,6 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
       final ZooKeeperServer.DataTreeBuilder treeBuilder,
       final int numConnections)
   {
-    this.numBrokers = numBrokers;
-    this.kafkaStartPort = kafkaStartPort;
-
     zookeeperClusterBuilder = new LocalZookeeperCluster.Builder()
         .setMinSessionTimeout(minSessionTimeout)
         .setMaxSessionTimeout(maxSessionTimeout)
@@ -62,6 +56,11 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
     }
 
     localKafkaCluster = kafkaClusterBuilder.build(kafkaLogDir, localZookeeperCluster, 0);
+  }
+
+  public void createTopic(final String topicName, final int partitionCount)
+  {
+    localKafkaCluster.createTopic(topicName, partitionCount);
   }
 
   @Override
