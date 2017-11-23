@@ -1,20 +1,27 @@
 package com.streamsimple.kafka.testutils;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.simplifi.it.javautil.net.Port;
 import com.simplifi.it.javautil.net.hunt.NaivePortHunter;
+import com.simplifi.it.javautil.poll.Poller;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 import kafka.admin.TopicCommand;
 import kafka.server.KafkaConfig;
+import kafka.server.KafkaServer;
 import kafka.server.KafkaServerStartable;
 import kafka.utils.ZkUtils;
 
 public class LocalKafkaCluster
 {
+  public static final byte RUNNING_AS_BROKER = 3;
+  public static final byte RUNNING_AS_CONTROLLER = 4;
+
   private final int numBrokers;
   private final File logDirs;
   private final LocalZookeeperCluster zookeeperCluster;
@@ -50,6 +57,37 @@ public class LocalKafkaCluster
       final Port brokerPort = brokerPorts.get(brokerCount);
       final KafkaServerStartable kafkaServer = createBroker(brokerCount, brokerPort);
       kafkaServer.startup();
+
+      // Wait for the server to actually start
+      final KafkaServer innerServer;
+
+      try {
+        innerServer = (KafkaServer)FieldUtils.readField(kafkaServer, "server", true);
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
+
+      try {
+        new Poller<Void>()
+            .setInterval(100L)
+            .setTimeout(30000L)
+            .poll(new Poller.Func<Void>()
+            {
+              public Poller.Result<Void> run()
+              {
+                byte state = innerServer.brokerState().currentState();
+
+                if (state == RUNNING_AS_BROKER || state == RUNNING_AS_CONTROLLER) {
+                  return Poller.Result.done();
+                } else {
+                  return Poller.Result.notDone();
+                }
+              }
+            });
+      } catch (TimeoutException e) {
+        throw new RuntimeException(e);
+      }
+
       brokers.add(kafkaServer);
     }
 
