@@ -62,12 +62,14 @@ public class LocalKafkaCluster
     brokerLogDir.mkdirs();
 
     Properties props = new Properties();
-    props.setProperty("broker.id", clusterId + "-" + brokerId);
+    props.setProperty("broker.id", Integer.toString((clusterId * 10000) + brokerId));
     props.setProperty("log.dirs", brokerLogDir.getAbsolutePath());
     props.setProperty("zookeeper.connect", "localhost:" + zookeeperCluster.getPort().toInt());
     props.setProperty("port", port.toString());
     props.setProperty("default.replication.factor", "1");
     props.setProperty("log.flush.interval.messages", "50000");
+    props.setProperty("offsets.topic.num.partitions", "1");
+    props.setProperty("offsets.topic.replication.factor", "1");
 
     return new KafkaServerStartable(new KafkaConfig(props));
   }
@@ -76,6 +78,18 @@ public class LocalKafkaCluster
   {
     validateIsRunning();
     return Lists.newArrayList(brokerPorts);
+  }
+
+  public String getBootstrapServersConfig()
+  {
+    final StringBuilder sb = new StringBuilder();
+
+    for (Port port: brokerPorts) {
+      sb.append("localhost:");
+      sb.append(port.toInt());
+    }
+
+    return sb.toString();
   }
 
   public void createTopic(final String topicName, final int partitionCount)

@@ -51,11 +51,11 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
 
     try {
       localZookeeperCluster = zookeeperClusterBuilder.build(zookeeperSnapDir, zookeeperLogDir, 0);
+      localKafkaCluster = kafkaClusterBuilder.build(kafkaLogDir, localZookeeperCluster, 0);
+      localKafkaCluster.setup();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    localKafkaCluster = kafkaClusterBuilder.build(kafkaLogDir, localZookeeperCluster, 0);
   }
 
   public void createTopic(final String topicName, final int partitionCount)
@@ -63,11 +63,15 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
     localKafkaCluster.createTopic(topicName, partitionCount);
   }
 
+  public String getBootstrapServersConfig()
+  {
+    return localKafkaCluster.getBootstrapServersConfig();
+  }
+
   @Override
   protected void finished(Description description)
   {
     localKafkaCluster.close();
-    localZookeeperCluster.close();
 
     super.finished(description);
   }
