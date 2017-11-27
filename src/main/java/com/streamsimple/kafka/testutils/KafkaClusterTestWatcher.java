@@ -2,10 +2,12 @@ package com.streamsimple.kafka.testutils;
 
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.junit.runner.Description;
+import com.simplifi.it.javautil.net.Endpoint;
 import com.simplifi.it.javautil.net.Port;
 import com.simplifi.it.javautils.testutils.DirTestWatcher;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class KafkaClusterTestWatcher extends DirTestWatcher
 {
@@ -61,6 +63,11 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
   public void createTopic(final String topicName, final int partitionCount)
   {
     localKafkaCluster.createTopic(topicName, partitionCount);
+  }
+
+  public List<Endpoint> getBootstrapEndpoints()
+  {
+    return localKafkaCluster.getBootstrapEndpoints();
   }
 
   public String getBootstrapEndpointsProp()
