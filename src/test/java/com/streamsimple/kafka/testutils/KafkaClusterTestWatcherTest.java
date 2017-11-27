@@ -33,7 +33,7 @@ public class KafkaClusterTestWatcherTest
     Properties prodProps = new Properties();
     prodProps.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     prodProps.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-    prodProps.setProperty("bootstrap.servers", kafkaTestWatcher.getBootstrapServersConfig());
+    prodProps.setProperty("bootstrap.servers", kafkaTestWatcher.getBootstrapEndpointsProp());
     prodProps.setProperty("linger.ms", "100");
 
     final KafkaProducer<String, String> producer = new KafkaProducer<String, String>(prodProps);
@@ -48,7 +48,7 @@ public class KafkaClusterTestWatcherTest
     }
 
     Properties subProps = new Properties();
-    subProps.setProperty("bootstrap.servers", kafkaTestWatcher.getBootstrapServersConfig());
+    subProps.setProperty("bootstrap.servers", kafkaTestWatcher.getBootstrapEndpointsProp());
     subProps.setProperty("group.id", "test-consumer");
     subProps.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     subProps.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");

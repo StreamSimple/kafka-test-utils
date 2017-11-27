@@ -1,8 +1,11 @@
 package com.streamsimple.kafka.testutils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.simplifi.it.javautil.net.Endpoint;
+import com.simplifi.it.javautil.net.Host;
 import com.simplifi.it.javautil.net.Port;
 import com.simplifi.it.javautil.net.hunt.NaivePortHunter;
 import com.simplifi.it.javautil.poll.Poller;
@@ -11,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
+import joptsimple.internal.Strings;
 import kafka.admin.TopicCommand;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
@@ -112,22 +116,20 @@ public class LocalKafkaCluster
     return new KafkaServerStartable(new KafkaConfig(props));
   }
 
-  public List<Port> getBrokerPorts()
+  public List<Endpoint> getBootstrapEndpoints()
   {
-    validateIsRunning();
-    return Lists.newArrayList(brokerPorts);
-  }
-
-  public String getBootstrapServersConfig()
-  {
-    final StringBuilder sb = new StringBuilder();
+    List<Endpoint> endpoints = Lists.newArrayList();
 
     for (Port port: brokerPorts) {
-      sb.append("localhost:");
-      sb.append(port.toInt());
+      endpoints.add(new Endpoint(Host.LOCAL, port));
     }
 
-    return sb.toString();
+    return endpoints;
+  }
+
+  public String getBootstrapEndpointsProp()
+  {
+    return StringUtils.join(getBootstrapEndpoints(), ',');
   }
 
   public void createTopic(final String topicName, final int partitionCount)

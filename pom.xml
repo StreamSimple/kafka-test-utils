@@ -3,12 +3,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.streamsimple.sdk.client</groupId>
-  <artifactId>service-client</artifactId>
+  <groupId>com.streamsimple.kafka</groupId>
+  <artifactId>test-utils</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
+    <dist.s3.wagon.version>1.2.1</dist.s3.wagon.version>
+
+    <!-- StreamSimple maven repo configs -->
+    <dist.repo.release.id>StreamSimple-release</dist.repo.release.id>
+    <dist.repo.snapshot.id>StreamSimple-snapshot</dist.repo.snapshot.id>
+    <dist.repo.release.name>Release Repository for StreamSimple</dist.repo.release.name>
+    <dist.repo.snapshot.name>Snapshot Repository for StreamSimple</dist.repo.snapshot.name>
+    <dist.repo.release.url>s3://streamsimple.pub.artifacts/release</dist.repo.release.url>
+    <dist.repo.snapshot.url>s3://streamsimple.pub.artifacts/snapshot</dist.repo.snapshot.url>
     <dist.s3.wagon.version>1.2.1</dist.s3.wagon.version>
   </properties>
 

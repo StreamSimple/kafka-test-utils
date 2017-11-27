@@ -63,9 +63,9 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
     localKafkaCluster.createTopic(topicName, partitionCount);
   }
 
-  public String getBootstrapServersConfig()
+  public String getBootstrapEndpointsProp()
   {
-    return localKafkaCluster.getBootstrapServersConfig();
+    return localKafkaCluster.getBootstrapEndpointsProp();
   }
 
   @Override
