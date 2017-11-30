@@ -5,8 +5,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,10 +34,10 @@ public class KafkaClusterTestWatcherTest
     kafkaTestWatcher.createTopic(topicName, 1);
 
     Properties prodProps = new Properties();
-    prodProps.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-    prodProps.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-    prodProps.setProperty("bootstrap.servers", kafkaTestWatcher.getBootstrapEndpointsProp());
-    prodProps.setProperty("linger.ms", "100");
+    prodProps.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
+    prodProps.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
+    prodProps.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaTestWatcher.getBootstrapEndpointsProp());
+    prodProps.setProperty(ProducerConfig.LINGER_MS_CONFIG, Integer.toString(100));
 
     final KafkaProducer<String, String> producer = new KafkaProducer<String, String>(prodProps);
     final Future<RecordMetadata> prodFuture;
@@ -48,12 +51,12 @@ public class KafkaClusterTestWatcherTest
     }
 
     Properties subProps = new Properties();
-    subProps.setProperty("bootstrap.servers", kafkaTestWatcher.getBootstrapEndpointsProp());
-    subProps.setProperty("group.id", "test-consumer");
-    subProps.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-    subProps.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-    subProps.setProperty("auto.offset.reset", "earliest");
-    subProps.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+    subProps.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaTestWatcher.getBootstrapEndpointsProp());
+    subProps.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "test-consumer");
+    subProps.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());
+    subProps.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());
+    subProps.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    subProps.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.FALSE.toString());
 
     KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(subProps);
     consumer.subscribe(Lists.newArrayList(topicName));
