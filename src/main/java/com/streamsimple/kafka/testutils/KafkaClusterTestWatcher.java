@@ -83,6 +83,14 @@ public class KafkaClusterTestWatcher extends DirTestWatcher
     super.finished(description);
   }
 
+  @Override
+  protected void failed(Throwable e, Description description)
+  {
+    localKafkaCluster.close();
+
+    super.failed(e, description);
+  }
+
   public static class Builder
   {
     private int numBrokers = 1;

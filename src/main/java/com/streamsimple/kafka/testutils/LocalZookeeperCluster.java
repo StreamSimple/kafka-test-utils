@@ -87,6 +87,7 @@ public class LocalZookeeperCluster
   public void close()
   {
     server.shutdown();
+    connectionFactory.closeAll();
     connectionFactory.shutdown();
   }
 
