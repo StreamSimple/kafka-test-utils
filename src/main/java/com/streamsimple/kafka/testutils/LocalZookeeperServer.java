@@ -36,6 +36,19 @@ public class LocalZookeeperServer extends ZooKeeperServer
     // Do nothing
   }
 
+  @Override
+  public void shutdown()
+  {
+    super.shutdown();
+
+    try {
+      this.getZKDatabase().close();
+      this.getTxnLogFactory().close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public static class Builder
   {
     private int tickTime = ZooKeeperServer.DEFAULT_TICK_TIME;
