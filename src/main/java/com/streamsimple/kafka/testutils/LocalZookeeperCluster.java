@@ -2,8 +2,8 @@ package com.streamsimple.kafka.testutils;
 
 import org.apache.zookeeper.server.NIOServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
-import com.simplifi.it.javautil.net.Port;
-import com.simplifi.it.javautil.poll.Poller;
+import com.streamsimple.javautil.net.Port;
+import com.streamsimple.javautil.poll.Poller;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;

@@ -2,9 +2,9 @@ package com.streamsimple.kafka.testutils;
 
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.junit.runner.Description;
-import com.simplifi.it.javautil.net.Endpoint;
-import com.simplifi.it.javautil.net.Port;
-import com.simplifi.it.javautils.testutils.DirTestWatcher;
+import com.streamsimple.javautil.net.Endpoint;
+import com.streamsimple.javautil.net.Port;
+import com.streamsimple.javautils.testutils.DirTestWatcher;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
