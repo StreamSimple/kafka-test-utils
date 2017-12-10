@@ -1,19 +1,38 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.streamsimple.kafka.testutils;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.streamsimple.javautil.net.Endpoint;
-import com.streamsimple.javautil.net.Host;
-import com.streamsimple.javautil.net.Port;
-import com.streamsimple.javautil.net.hunt.NaivePortHunter;
-import com.streamsimple.javautil.poll.Poller;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
+
+import com.streamsimple.commons.lang3.StringUtils;
+import com.streamsimple.commons.lang3.reflect.FieldUtils;
+import com.streamsimple.guava.common.base.Preconditions;
+import com.streamsimple.guava.common.collect.Lists;
+import com.streamsimple.javautil.net.Endpoint;
+import com.streamsimple.javautil.net.Host;
+import com.streamsimple.javautil.net.Port;
+import com.streamsimple.javautil.net.hunt.NaivePortHunter;
+import com.streamsimple.javautil.poll.Poller;
+
 import kafka.admin.TopicCommand;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
@@ -37,8 +56,9 @@ public class LocalKafkaCluster
   private boolean running = false;
 
   public LocalKafkaCluster(final int numBrokers, final File logDirs,
-                           final LocalZookeeperCluster zookeeperCluster,
-                           final int clusterId, final Port startPort) {
+      final LocalZookeeperCluster zookeeperCluster,
+      final int clusterId, final Port startPort)
+  {
     this.numBrokers = numBrokers;
     this.logDirs = logDirs;
     this.zookeeperCluster = zookeeperCluster;
@@ -183,7 +203,7 @@ public class LocalKafkaCluster
     }
 
     public LocalKafkaCluster build(final File logDirs, final LocalZookeeperCluster zookeeperCluster,
-                                   final int clusterId)
+        final int clusterId)
     {
       return new LocalKafkaCluster(numBrokers, logDirs, zookeeperCluster, clusterId, startPort);
     }
