@@ -15,6 +15,31 @@
   <packaging>jar</packaging>
   <inceptionYear>2017</inceptionYear>
 
+  <repositories>
+    <repository>
+      <id>StreamSimple-release</id>
+      <name>Release Repository for StreamSimple</name>
+      <url>s3://streamsimple.pub.artifacts/release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>StreamSimple-snapshot</id>
+      <name>Snapshot Repository for StreamSimple</name>
+      <url>s3://streamsimple.pub.artifacts/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
       <plugin>
